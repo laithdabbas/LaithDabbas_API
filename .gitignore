@@ -1,0 +1,91 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+task/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+*.pyz
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtualenvs and environments
+venv/
+.venv/
+env/
+ENV/
+venv.bak/
+env.bak/
+
+# Pyenv
+.python-version
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Pytest
+.pytest_cache/
+
+# Mypy
+.mypy_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Logs and databases
+*.log
+*.sqlite3
+chroma_db/
+chroma_db/*.sqlite3
+
+# Environment files / secrets
+.env
+.env.*
+
+# Compiled Python
+*.pyc
+
+# Uploads and build artifacts
+uploads/
+
+# Machine learning model artifacts
+*.pkl
+*.pt
+*.pth
+*.h5
+*.hdf5
+*.onnx
+*.ckpt
+
+# Large data folders
+data/
+models/
+
+
