@@ -2,6 +2,7 @@ fastapi
 uvicorn[standard]
 python-multipart
 pytesseract
+opencv-python
 numpy
 Pillow
 packaging
