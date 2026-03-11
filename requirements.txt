@@ -1,10 +1,13 @@
 fastapi
 uvicorn[standard]
+python-multipart
 pytesseract
 numpy
 Pillow
 packaging
 pdf2image
+gradio
+requests
 chromadb
 chroma-hnswlib
 langchain

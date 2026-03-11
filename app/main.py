@@ -19,6 +19,7 @@ app = FastAPI()
 
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(DATA_PATH, exist_ok=True)
 
 @app.get("/")
 def home():
@@ -79,11 +80,12 @@ def extract(file: UploadFile = File(...), query: str = Form(...), fields: str = 
     collection = build_vector_db()
     docs = retrieve_docs(collection, query)
 
-    extracted = extract_information(docs,fields)
+    fields_list = [f.strip() for f in fields.split(",") if f.strip()]
+    extracted = extract_information(docs, fields_list)
 
     return {
         "query": query,
-        "fields": fields,
+        "fields": fields_list,
         "extracted_information": extracted
     }
 

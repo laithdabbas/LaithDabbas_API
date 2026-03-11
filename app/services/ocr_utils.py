@@ -5,7 +5,8 @@ from pdf2image import convert_from_path
 from PIL import Image
 import pytesseract
 
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+if os.name == "nt":
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 def preprocess_image_cv(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)

@@ -1,43 +1,93 @@
+import os
+import requests
 import gradio as gr
-from app.services.ocr_utils import run_ocr
-from app.services.rag import retrieve_docs, ask_llm, extract_information, build_vector_db
 
-# Build vector DB once
-collection = build_vector_db()
+API_URL = os.getenv("API_URL", "http://localhost:8000")
 
-def ocr_demo(file):
-    text = run_ocr(file.name)
-    return text
 
-def rag_demo(file, question):
-    docs = retrieve_docs(collection, question)
-    answer = ask_llm(docs, question)
-    return answer
+def _require_file(file_path: str):
+    if not file_path:
+        raise gr.Error("Please upload a file first.")
 
-def extract_demo(file, query, fields):
-    docs = retrieve_docs(collection, query)
-    extracted = extract_information(docs, fields.split(","))
-    return extracted
+
+def _post(endpoint: str, *, files=None, data=None):
+    url = f"{API_URL}{endpoint}"
+    try:
+        response = requests.post(url, files=files, data=data, timeout=300)
+        response.raise_for_status()
+    except requests.RequestException as exc:
+        detail = ""
+        if hasattr(exc, "response") and exc.response is not None:
+            try:
+                detail = exc.response.json()
+            except ValueError:
+                detail = exc.response.text
+        raise gr.Error(f"API request failed: {detail or str(exc)}")
+    return response.json()
+
+
+def ocr_demo(file_path, lang):
+    _require_file(file_path)
+    with open(file_path, "rb") as handle:
+        payload = _post(
+            "/ocr",
+            files={"file": (os.path.basename(file_path), handle)},
+            data={"lang": lang},
+        )
+    return payload.get("ocr_text", "")
+
+
+def rag_demo(file_path, question):
+    _require_file(file_path)
+    if not question:
+        raise gr.Error("Please enter a question.")
+    with open(file_path, "rb") as handle:
+        payload = _post(
+            "/RAG",
+            files={"file": (os.path.basename(file_path), handle)},
+            data={"question": question},
+        )
+    return payload.get("answer", "")
+
+
+def extract_demo(file_path, query, fields):
+    _require_file(file_path)
+    if not query:
+        raise gr.Error("Please enter a query.")
+    with open(file_path, "rb") as handle:
+        payload = _post(
+            "/extract",
+            files={"file": (os.path.basename(file_path), handle)},
+            data={"query": query, "fields": fields or ""},
+        )
+    return payload.get("extracted_information", "")
+
 
 with gr.Blocks() as demo:
     gr.Markdown("# Document AI Demo")
-    
+    gr.Markdown(f"**API URL:** `{API_URL}`")
+
     with gr.Tab("OCR"):
-        file_input = gr.File(label="Upload PDF/Image")
+        file_input = gr.File(label="Upload PDF/Image", type="filepath")
+        lang_input = gr.Textbox(label="Language", value="eng")
         output_text = gr.Textbox(label="OCR Text")
-        gr.Button("Run OCR").click(ocr_demo, inputs=file_input, outputs=output_text)
-    
+        gr.Button("Run OCR").click(ocr_demo, inputs=[file_input, lang_input], outputs=output_text)
+
     with gr.Tab("RAG QA"):
-        file_input2 = gr.File(label="Upload PDF")
+        file_input2 = gr.File(label="Upload PDF", type="filepath")
         question_input = gr.Textbox(label="Question")
         output_answer = gr.Textbox(label="Answer")
-        gr.Button("Ask Question").click(rag_demo, inputs=[file_input2, question_input], outputs=output_answer)
-    
+        gr.Button("Ask Question").click(
+            rag_demo, inputs=[file_input2, question_input], outputs=output_answer
+        )
+
     with gr.Tab("Extraction"):
-        file_input3 = gr.File(label="Upload PDF")
+        file_input3 = gr.File(label="Upload PDF", type="filepath")
         query_input = gr.Textbox(label="Query")
         fields_input = gr.Textbox(label="Fields (comma-separated)")
         output_extract = gr.JSON(label="Extracted Info")
-        gr.Button("Extract").click(extract_demo, inputs=[file_input3, query_input, fields_input], outputs=output_extract)
+        gr.Button("Extract").click(
+            extract_demo, inputs=[file_input3, query_input, fields_input], outputs=output_extract
+        )
 
-demo.launch()
+demo.launch(server_name="0.0.0.0", server_port=7860)
