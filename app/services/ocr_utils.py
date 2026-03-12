@@ -5,6 +5,9 @@ from pdf2image import convert_from_path
 from PIL import Image
 import pytesseract
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+POPPLER_PATH = os.path.join(BASE_DIR, "poppler_dir", "poppler-24.08.0", "Library", "bin")
+
 if os.name == "nt":
     pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
@@ -26,7 +29,10 @@ def run_ocr_image(file_path, language="eng"):
     return text
 
 def preprocess_pdf(pdf_path):
-    pages = convert_from_path(pdf_path, dpi=300)
+    if os.name == "nt":
+        pages = convert_from_path(pdf_path, dpi=300, poppler_path=POPPLER_PATH)
+    else:
+        pages = convert_from_path(pdf_path, dpi=300)
     processed_pages = []
     for page in pages:
         image = cv2.cvtColor(np.array(page), cv2.COLOR_RGB2BGR)

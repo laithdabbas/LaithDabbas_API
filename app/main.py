@@ -27,7 +27,7 @@ def home():
 
 
 @app.post("/ocr")
-async def ask(file: UploadFile = File(...), lang: str = Form("eng")):
+async def ocr(file: UploadFile = File(...), lang: str = Form("eng")):
    
 
     file_path = os.path.join(UPLOAD_DIR, file.filename)
@@ -45,7 +45,7 @@ async def ask(file: UploadFile = File(...), lang: str = Form("eng")):
 
 
 @app.post("/RAG")
-async def ask(file: UploadFile = File(...), question: str = Form(...)):
+async def rag(file: UploadFile = File(...), question: str = Form(...)):
 
     file_path = os.path.join(DATA_PATH, file.filename)
 
