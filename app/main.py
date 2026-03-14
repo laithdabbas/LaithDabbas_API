@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from app.services.ML_Model import predict_text   
 from app.services.ocr_utils import run_ocr 
 from app.services.rag import DATA_PATH, build_vector_db, extract_information, retrieve_docs, ask_llm
+from app.services.model import ask_general_llm
 
 
 class ExtractionInput(BaseModel):
@@ -14,6 +15,10 @@ class ExtractionInput(BaseModel):
 
 class TextInput(BaseModel):
     text: str
+
+
+class ChatInput(BaseModel):
+    question: str
 
 app = FastAPI()
 
@@ -96,3 +101,12 @@ def predict(data: TextInput):
     return {
         "input": data.text,
         "prediction": result }
+
+
+@app.post("/chat")
+def chat(data: ChatInput):
+    answer = ask_general_llm(data.question)
+    return {
+        "question": data.question,
+        "answer": answer,
+    }

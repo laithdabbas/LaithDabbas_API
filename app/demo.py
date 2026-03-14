@@ -10,10 +10,10 @@ def _require_file(file_path: str):
         raise gr.Error("Please upload a file first.")
 
 
-def _post(endpoint: str, *, files=None, data=None):
+def _post(endpoint: str, *, files=None, data=None, json=None):
     url = f"{API_URL}{endpoint}"
     try:
-        response = requests.post(url, files=files, data=data, timeout=300)
+        response = requests.post(url, files=files, data=data, json=json, timeout=300)
         response.raise_for_status()
     except requests.RequestException as exc:
         detail = ""
@@ -63,6 +63,20 @@ def extract_demo(file_path, query, fields):
     return payload.get("extracted_information", "")
 
 
+def predict_demo(text):
+    if not text or not text.strip():
+        raise gr.Error("Please enter text for prediction.")
+    payload = _post("/predict", json={"text": text.strip()})
+    return payload.get("prediction", "")
+
+
+def chat_demo(question):
+    if not question or not question.strip():
+        raise gr.Error("Please enter a question.")
+    payload = _post("/chat", json={"question": question.strip()})
+    return payload.get("answer", "")
+
+
 with gr.Blocks() as demo:
     gr.Markdown("# Document AI Demo")
     gr.Markdown(f"**API URL:** `{API_URL}`")
@@ -90,4 +104,19 @@ with gr.Blocks() as demo:
             extract_demo, inputs=[file_input3, query_input, fields_input], outputs=output_extract
         )
 
-demo.launch(server_name="0.0.0.0", server_port=7860)
+    with gr.Tab("Prediction"):
+        predict_input = gr.Textbox(label="Input Text", lines=4)
+        predict_output = gr.Textbox(label="Prediction")
+        gr.Button("Predict").click(
+            predict_demo, inputs=[predict_input], outputs=predict_output
+        )
+
+    with gr.Tab("General Assistant"):
+        chat_input = gr.Textbox(label="Ask Anything", lines=4)
+        chat_output = gr.Textbox(label="Assistant Answer", lines=8)
+        gr.Button("Ask Assistant").click(
+            chat_demo, inputs=[chat_input], outputs=chat_output
+        )
+
+if __name__ == "__main__":
+    demo.launch(server_name="0.0.0.0", server_port=7860)

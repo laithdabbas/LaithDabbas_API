@@ -66,12 +66,19 @@ def ask_llm(context_docs, question):
      Question: {question}
      """
 
-    response = ollama.chat(
-        model="tinyllama",
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    return response["message"]["content"]
+    try:
+        response = ollama.chat(
+            model="tinyllama",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response["message"]["content"]
+    except Exception as exc:
+        context_preview = "\n".join(context_docs[:2]) if isinstance(context_docs, list) else str(context_docs)
+        return (
+            "RAG fallback response: Ollama is unavailable. "
+            f"Start Ollama to get full LLM answers. Error: {exc}\n\n"
+            f"Retrieved context preview:\n{context_preview[:1200]}"
+        )
 def extract_information(context_docs, fields):
 
     prompt = f"""
@@ -87,9 +94,14 @@ def extract_information(context_docs, fields):
     {context_docs}
     """
 
-    response = ollama.chat(
-        model="tinyllama",
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    return response["message"]["content"]
+    try:
+        response = ollama.chat(
+            model="tinyllama",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response["message"]["content"]
+    except Exception as exc:
+        return {
+            "warning": f"Ollama unavailable, fallback extraction used: {exc}",
+            "fields": {field: "Not found (LLM unavailable)" for field in fields},
+        }
