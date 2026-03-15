@@ -6,7 +6,7 @@ SYSTEM_PROMPT = (
     "You are a helpful, friendly assistant that helps users with general questions. "
     "Be concise, clear, and practical."
 )
-GENERAL_MODEL_NAME = os.getenv("GENERAL_LLM_MODEL", "llama3")
+GENERAL_MODEL_NAME = os.getenv("GENERAL_LLM_MODEL", "tinyllama")
 
 
 def ask_general_llm(question: str) -> str:
