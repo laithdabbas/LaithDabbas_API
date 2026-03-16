@@ -18,6 +18,7 @@ eggs/
 
 # PyInstaller
 *.manifest
+*.spec
 *.pyz
 
 # Installer logs
@@ -73,10 +74,7 @@ chroma_db/*.sqlite3
 # Uploads and build artifacts
 uploads/
 poppler_dir/
-dist*/
-build*/
-build_*/
-dist_*/
+dist/demo/_internal/
 
 # Machine learning model artifacts
 *.pkl

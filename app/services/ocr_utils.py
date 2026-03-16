@@ -1,38 +1,15 @@
 import os
-import sys
 import cv2
 import numpy as np
 from pdf2image import convert_from_path
 from PIL import Image
 import pytesseract
 
-def _runtime_base_dir() -> str:
-    # In a PyInstaller one-folder build, packaged data is next to the executable,
-    # while python modules live in the _internal directory.
-    if getattr(sys, "frozen", False):
-        return os.path.dirname(sys.executable)
-    return os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-
-BASE_DIR = _runtime_base_dir()
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 POPPLER_PATH = os.path.join(BASE_DIR, "poppler_dir", "poppler-24.08.0", "Library", "bin")
 
 if os.name == "nt":
     pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-
-
-def _assert_ocr_deps() -> None:
-    if os.name == "nt":
-        if not os.path.exists(pytesseract.pytesseract.tesseract_cmd):
-            raise FileNotFoundError(
-                "Tesseract not found. Install it or update pytesseract.pytesseract.tesseract_cmd. "
-                f"Missing: {pytesseract.pytesseract.tesseract_cmd}"
-            )
-        if not os.path.isdir(POPPLER_PATH):
-            raise FileNotFoundError(
-                "Poppler not found (needed for PDF OCR). Expected folder: "
-                f"{POPPLER_PATH}"
-            )
 
 def preprocess_image_cv(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -71,7 +48,6 @@ def preprocess_pdf(pdf_path):
     return processed_pages
 
 def run_ocr_pdf(file_path, language="eng"):
-    _assert_ocr_deps()
     pages = preprocess_pdf(file_path)
     text = ""
     for page in pages:

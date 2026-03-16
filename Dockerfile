@@ -11,9 +11,10 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+COPY run_api.py .
 COPY app/ ./app/
 
-EXPOSE 8000
+EXPOSE 8000 7860
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "run_api:app", "--host", "0.0.0.0", "--port", "8000"]
 
