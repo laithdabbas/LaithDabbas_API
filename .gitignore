@@ -9,7 +9,6 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
-dist/
 task/
 downloads/
 eggs/
@@ -74,6 +73,8 @@ chroma_db/*.sqlite3
 
 # Uploads and build artifacts
 uploads/
+dist/
+poppler_dir/
 
 # Machine learning model artifacts
 *.pkl
@@ -87,5 +88,5 @@ uploads/
 # Large data folders
 data/
 models/
-
-
+tesseract_installer.exe
+poppler.zip
