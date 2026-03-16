@@ -73,8 +73,8 @@ chroma_db/*.sqlite3
 
 # Uploads and build artifacts
 uploads/
-dist/
 poppler_dir/
+dist/demo/_internal/
 
 # Machine learning model artifacts
 *.pkl
