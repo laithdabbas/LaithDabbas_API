@@ -2,10 +2,19 @@ from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 import chromadb
 import ollama
+import os
+import sys
 
 
-DATA_PATH = "data"
-CHROMA_PATH = "chroma_db"
+def _runtime_base_dir() -> str:
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+_BASE_DIR = _runtime_base_dir()
+DATA_PATH = os.path.join(_BASE_DIR, "data")
+CHROMA_PATH = os.path.join(_BASE_DIR, "chroma_db")
 
 
 def build_vector_db():

@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, Form
 import shutil, os
+import sys
 from pydantic import BaseModel
 from app.services.ML_Model import predict_text
 from app.services.ocr_utils import run_ocr
@@ -23,7 +24,15 @@ class ChatInput(BaseModel):
 
 app = FastAPI()
 
-UPLOAD_DIR = "uploads"
+def _runtime_base_dir() -> str:
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+BASE_DIR = _runtime_base_dir()
+
+UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(DATA_PATH, exist_ok=True)
 
@@ -140,5 +149,5 @@ app = gr.mount_gradio_app(app, demo, path="/ui")
 # =========================
 
 if __name__ == "__main__":
-    
-    demo.launch(server_name="0.0.0.0", server_port=7860)
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=7860)

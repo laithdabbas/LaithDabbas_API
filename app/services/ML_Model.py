@@ -1,11 +1,18 @@
 import os
+import sys
 import pandas as pd
 import joblib
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 
-MODEL_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "spam_model.pkl")
+def _runtime_base_dir() -> str:
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
+MODEL_PATH = os.path.join(_runtime_base_dir(), "spam_model.pkl")
 
 def _train_model():
     data = {
@@ -32,7 +39,11 @@ def _train_model():
         ("classifier", MultinomialNB())
     ])
     pipeline.fit(df["text"], df["label"])
-    joblib.dump(pipeline, MODEL_PATH)
+    try:
+        joblib.dump(pipeline, MODEL_PATH)
+    except Exception:
+        # If the app folder is not writable, keep the in-memory model.
+        pass
     return pipeline
 
 if os.path.exists(MODEL_PATH):

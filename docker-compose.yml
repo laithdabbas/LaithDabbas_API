@@ -8,6 +8,7 @@ services:
     container_name: ocr-rag-api
     ports:
       - "8000:8000"
+      - "7860:8000"
     volumes:
       - ./uploads:/app/uploads
       - ./chroma_db:/app/chroma_db
@@ -15,20 +16,6 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
-    networks:
-      - app-network
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: ocr-rag-frontend
-    ports:
-      - "7860:7860"
-    environment:
-      - API_URL=http://api:8000
-    command: ["python", "app/demo.py"]
-    depends_on:
-      - api
     networks:
       - app-network
 
