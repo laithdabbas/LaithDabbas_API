@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, Form
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 import shutil, os
 from pydantic import BaseModel
 from app.services.ML_Model import predict_text
@@ -36,7 +36,13 @@ async def ocr(file: UploadFile = File(...), lang: str = Form("eng")):
     file_path = os.path.join(UPLOAD_DIR, file.filename)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
-    text = run_ocr(file_path, lang)
+    try:
+        text = run_ocr(file_path, lang)
+    except Exception as exc:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        raise HTTPException(status_code=400, detail=str(exc))
+
     os.remove(file_path)
     return {"filename": file.filename, "ocr_text": text}
 
