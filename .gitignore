@@ -75,6 +75,7 @@ chroma_db/*.sqlite3
 uploads/
 poppler_dir/
 dist/demo/_internal/
+dist/start_server.exe
 
 # Machine learning model artifacts
 *.pkl
