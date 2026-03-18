@@ -102,13 +102,6 @@ Due to platform limitations (no background services), Ollama cannot run in Huggi
 
 ---
 
-## 🔑 Environment Variables
-
-| Variable   | Description                                 |
-| ---------- | ------------------------------------------- |
-| USE_OLLAMA | true = use Ollama, false = use Transformers |
-
----
 
 ## 📦 Deliverables
 
