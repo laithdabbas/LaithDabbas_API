@@ -1,0 +1,79 @@
+# 🚀 Setup & Running Guide (API)
+
+## 📌 Requirements
+
+* Python 3.11+
+* Docker (recommended)
+* Ollama installed (for offline LLM)
+
+---
+
+## 🧪 Option 1: Run with Docker (Recommended)
+
+### Step 1: Build & run
+
+```bash
+docker compose up --build -d
+```
+
+### Step 2: Access
+
+* API: http://localhost:8000
+* Docs: http://localhost:8000/docs
+* GRADIO: http://localhost:7860
+
+---
+
+## 🖥️ Option 2: Run Locally
+
+### 1. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Start Ollama
+
+```bash
+ollama pull tinyllama
+ollama run tinyllama
+```
+
+### 3. Run application
+
+```bash
+python start_server.py
+```
+
+---
+
+## 🌐 Cloud Demo
+
+* Hosted on Hugging Face Spaces
+HF Space :  https://huggingface.co/spaces/laith-dabbas/Laith_Da
+
+---
+
+
+
+## ✅ Verification
+
+System is working if:
+
+* OCR extracts text
+* RAG answers PDF questions
+* Chat returns responses
+* ML prediction works
+
+
+
+---
+
+## ▶️ How to Run (Quick)
+
+```bash
+docker compose up --build -d
+```
+
+Then open:
+http://localhost:8000/docs
