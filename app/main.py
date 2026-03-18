@@ -51,20 +51,34 @@ async def rag(file: UploadFile = File(...), question: str = Form(...)):
     file_path = os.path.join(DATA_PATH, file.filename)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
-    collection = build_vector_db()
-    docs = retrieve_docs(collection, question)
-    answer = ask_llm(docs, question)
+    try:
+        collection = build_vector_db(file_path=file_path)
+        docs = retrieve_docs(collection, question)
+        answer = ask_llm(docs, question)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    finally:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
     return {"filename": file.filename, "question": question, "answer": answer}
 
 @app.post("/extract")
-def extract(file: UploadFile = File(...), query: str = Form(...), fields: str = Form(...)):
+def extract(file: UploadFile = File(...), query: str = Form(...), fields: str = Form("")):
     file_path = os.path.join(DATA_PATH, file.filename)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
-    collection = build_vector_db()
-    docs = retrieve_docs(collection, query)
-    fields_list = [f.strip() for f in fields.split(",") if f.strip()]
-    extracted = extract_information(docs, fields_list)
+    try:
+        collection = build_vector_db(file_path=file_path)
+        docs = retrieve_docs(collection, query)
+        fields_list = [f.strip() for f in fields.split(",") if f.strip()]
+        extracted = extract_information(docs, fields_list)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    finally:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
     return {"query": query, "fields": fields_list, "extracted_information": extracted}
 
 @app.post("/predict")
@@ -85,12 +99,12 @@ def ocr_ui(file_path, lang):
     return run_ocr(file_path, lang)
 
 def rag_ui(file_path, question):
-    collection = build_vector_db()
+    collection = build_vector_db(file_path=file_path)
     docs = retrieve_docs(collection, question)
     return ask_llm(docs, question)
 
 def extract_ui(file_path, query, fields):
-    collection = build_vector_db()
+    collection = build_vector_db(file_path=file_path)
     docs = retrieve_docs(collection, query)
     fields_list = [f.strip() for f in fields.split(",") if f.strip()]
     return extract_information(docs, fields_list)
