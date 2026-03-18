@@ -59,8 +59,8 @@ Gradio UI → FastAPI → Service Layer → Models
 ### 1. Clone repo
 
 ```bash
-git clone 
-cd your-repo
+git clone https://github.com/laithdabbas/LaithDabbas_API
+cd LaithDabbas_API
 ```
 
 ### 2. Install dependencies
@@ -72,14 +72,16 @@ pip install -r requirements.txt
 ### 3. Run Ollama (required for offline LLM)
 
 ```bash
-ollama serve
 ollama pull tinyllama
+ollama run tinyllama
+or
+ollama run tinyllama 
 ```
 
 ### 4. Run the app
 
 ```bash
-python app.py
+python start_server.py
 ```
 
 ---
@@ -131,7 +133,6 @@ See `/deliverables` folder for:
 ## 📌 Notes
 
 * Fully offline system supported locally
-* Cloud demo is a **partial adaptation** (allowed by assignment)
 * Designed with scalability and maintainability in mind
 
 ---
@@ -139,4 +140,3 @@ See `/deliverables` folder for:
 ## 👤 Author
 
 Laith Dabbas
-AI & Robotics Student
