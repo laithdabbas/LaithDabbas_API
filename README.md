@@ -123,10 +123,11 @@ See `/deliverables` folder for:
 
 ---
 
-## 📌 Notes
+## ⚠️ Note
 
-* Fully offline system supported locally
-* Designed with scalability and maintainability in mind
+Due to limited hardware capabilities on my personal computer, I used the lightweight model `tinyllama` for this project.
+
+For some tasks and testing, I also received support by running parts of the project on a friend's computer with better performance.
 
 ---
 
